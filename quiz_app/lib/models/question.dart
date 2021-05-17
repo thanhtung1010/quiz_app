@@ -4,7 +4,7 @@ class DataQuestions {
   Future<void> AddQuestion(
       Map questionData, String questionId, String courseId) async {
     await FirebaseFirestore.instance
-        .collection('Couses')
+        .collection('Categorys')
         .doc(courseId)
         .collection('Questions')
         .doc(questionId)
@@ -18,54 +18,54 @@ class DataQuestions {
     });
   }
 
-  Future GetLimitIdQuestionList(String courseId) async {
-    final CollectionReference questionIdLimitList = FirebaseFirestore.instance
-        .collection('Couses')
-        .doc(courseId)
-        .collection('Questions');
-    List QuestionList = [];
+  // Future GetLimitIdQuestionList(String courseId) async {
+  //   final CollectionReference questionIdLimitList = FirebaseFirestore.instance
+  //       .collection('Couses')
+  //       .doc(courseId)
+  //       .collection('Questions');
+  //   List QuestionList = [];
 
-    try {
-      await questionIdLimitList
-          .orderBy('questionID')
-          .limit(20)
-          .get()
-          .then((querySnapshot) => {
-                querySnapshot.docs.forEach((element) {
-                  QuestionList.add(element.get('questionID'));
-                }),
-              });
-      return QuestionList;
-    } catch (e) {
-      print(e.toString());
-      return null;
-    }
-  }
+  //   try {
+  //     await questionIdLimitList
+  //         .orderBy('questionID')
+  //         .limit(20)
+  //         .get()
+  //         .then((querySnapshot) => {
+  //               querySnapshot.docs.forEach((element) {
+  //                 QuestionList.add(element.get('questionID'));
+  //               }),
+  //             });
+  //     return QuestionList;
+  //   } catch (e) {
+  //     print(e.toString());
+  //     return null;
+  //   }
+  // }
 
-  getLimitQuestionData(String courseId) async {
-    List QuestionLimitList = [];
-    final CollectionReference questionLimitList = FirebaseFirestore.instance
-        .collection("Couses")
-        .doc(courseId)
-        .collection("Questions");
+  // getLimitQuestionData(String courseId) async {
+  //   List QuestionLimitList = [];
+  //   final CollectionReference questionLimitList = FirebaseFirestore.instance
+  //       .collection("Couses")
+  //       .doc(courseId)
+  //       .collection("Questions");
 
-    try {
-      await questionLimitList.limit(20).get().then((querySnapshot) => {
-            querySnapshot.docs.forEach((element) {
-              QuestionLimitList.add(element.data());
-            }),
-          });
-      return QuestionLimitList;
-    } catch (e) {
-      print(e.toString());
-      return null;
-    }
-  }
+  //   try {
+  //     await questionLimitList.limit(20).get().then((querySnapshot) => {
+  //           querySnapshot.docs.forEach((element) {
+  //             QuestionLimitList.add(element.data());
+  //           }),
+  //         });
+  //     return QuestionLimitList;
+  //   } catch (e) {
+  //     print(e.toString());
+  //     return null;
+  //   }
+  // }
 
   getQuestionData(String courseId) async {
     List QuestionList = [];
     final CollectionReference questionList = FirebaseFirestore.instance
-        .collection("Couses")
+        .collection("Categorys")
         .doc(courseId)
         .collection("Questions");
 
@@ -107,9 +107,9 @@ class DataQuestions {
   //       .get();
   // }
 
-  Future GetIdQuestionListByCourseId(String courseId) async {
+  Future GetIdQuestionListByCategoryId(String courseId) async {
     final CollectionReference questionList = FirebaseFirestore.instance
-        .collection('Couses')
+        .collection('Categorys')
         .doc(courseId)
         .collection('Questions');
     List<String> QuestionList = [];

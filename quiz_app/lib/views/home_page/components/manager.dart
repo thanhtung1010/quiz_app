@@ -1,149 +1,184 @@
-import 'package:flutter/foundation.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:quiz_app/views/Constants.dart';
-import 'package:quiz_app/views/components/custom_title.dart';
-import 'package:quiz_app/views/home_page/components/MCourses.dart';
+import 'package:quiz_app/views/components/circular_button.dart';
+import 'package:quiz_app/views/home_page/components/MCategory.dart';
 import 'package:quiz_app/views/home_page/components/MQuestion.dart';
-import 'package:quiz_app/views/home_page/components/MUsers.dart';
-import 'package:quiz_app/views/home_page/components/Mtification.dart';
+import 'package:quiz_app/views/home_page/components/MUser.dart';
+import 'package:quiz_app/views/home_page/components/background.dart';
 
-class ManagerBody extends StatefulWidget {
-  const ManagerBody({Key key}) : super(key: key);
+class ManagerPage extends StatefulWidget {
   @override
-  _ManagerBodyState createState() => _ManagerBodyState();
+  _ManagerPageState createState() => _ManagerPageState();
 }
 
-class _ManagerBodyState extends State<ManagerBody> {
+class _ManagerPageState extends State<ManagerPage>
+    with SingleTickerProviderStateMixin {
+  AnimationController animationController;
+  Animation degOneTranslationAnimation;
+  Animation rotationAnimation;
   int _selectedIndex = 0;
   List<Widget> list = [
-    MUser(),
-    MCourses(),
-    MQuestion(),
-    MNotification(),
+    ManageCategory(),
+    ManageQuestion(),
+    ManageUSer(),
   ];
 
-  onTap(context, i) {
-    setState(() {
-      _selectedIndex = i;
-      Navigator.pop(context);
+  double getRadiansFormDegree(double degree) {
+    double unitRadian = 57.295779513;
+    return degree / unitRadian;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    animationController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 250),
+    );
+    degOneTranslationAnimation =
+        Tween(begin: 0.0, end: 1.0).animate(animationController);
+    animationController.addListener(() {
+      setState(() {});
     });
+    rotationAnimation = Tween(begin: 180.0, end: 0.0).animate(
+      CurvedAnimation(
+        parent: animationController,
+        curve: Curves.easeOut,
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Manager',
-          style: TextStyle(
-            fontFamily: 'Avenir',
-            fontSize: 25,
-          ),
-        ),
-        backgroundColor: Colors.blue[700],
-      ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [kPrimaryLightColor, navigationColor],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            stops: [0.3, 1],
-          ),
-        ),
+      backgroundColor: Colors.purple[50],
+      body: Background(
         child: list[_selectedIndex],
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.blueAccent, kPrimaryLightColor],
-                  begin: Alignment.center,
-                  end: Alignment.bottomCenter,
-                  stops: [0, 0.5],
-                ),
-              ),
-              child: Container(
-                child: Column(
-                  children: <Widget>[
-                    Material(
-                      child: Image.asset(
-                        'assets/images/AGU.png',
-                        width: 100,
-                        height: 100,
-                      ),
-                      borderRadius: BorderRadius.circular(50),
-                      elevation: 10,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
-                      child: Text(
-                        'CICT',
-                        style: TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
+      floatingActionButton: Stack(
+        children: <Widget>[
+          Positioned(
+            left: 20,
+            top: 40,
+            child: Transform.translate(
+              offset: Offset.fromDirection(getRadiansFormDegree(0),
+                  degOneTranslationAnimation.value * 100),
+              child: Transform(
+                alignment: Alignment.center,
+                transform: Matrix4.rotationZ(
+                  getRadiansFormDegree(rotationAnimation.value),
+                )..scale(degOneTranslationAnimation.value),
+                child: CircularButton(
+                  color: Colors.white,
+                  width: 50,
+                  height: 50,
+                  icon: Icon(
+                    Icons.margin,
+                    color: Colors.black,
+                  ),
+                  onclick: () {
+                    if (animationController.isCompleted) {
+                      animationController.reverse();
+                      setState(() {
+                        _selectedIndex = 0;
+                      });
+                    } else {
+                      animationController.forward();
+                    }
+                  },
                 ),
               ),
             ),
-            CustomTitle(
-              icon1: Icon(
-                Icons.person,
-              ),
-              text: Text(
-                'User',
-                style: TextStyle(
-                  fontSize: 16.0,
+          ),
+          Positioned(
+            left: 20,
+            top: 40,
+            child: Transform.translate(
+              offset: Offset.fromDirection(getRadiansFormDegree(45),
+                  degOneTranslationAnimation.value * 100),
+              child: Transform(
+                alignment: Alignment.center,
+                transform: Matrix4.rotationZ(
+                  getRadiansFormDegree(rotationAnimation.value),
+                )..scale(degOneTranslationAnimation.value),
+                child: CircularButton(
+                  color: Colors.white,
+                  width: 50,
+                  height: 50,
+                  icon: Icon(
+                    Icons.question_answer_outlined,
+                    color: Colors.black,
+                  ),
+                  onclick: () {
+                    if (animationController.isCompleted) {
+                      animationController.reverse();
+                      setState(() {
+                        _selectedIndex = 1;
+                      });
+                    } else {
+                      animationController.forward();
+                    }
+                  },
                 ),
               ),
-              icon2: Icon(Icons.arrow_right),
-              press: () => onTap(context, 0),
             ),
-            CustomTitle(
-              icon1: Icon(
-                Icons.margin,
-              ),
-              text: Text(
-                'Courses',
-                style: TextStyle(
-                  fontSize: 16.0,
+          ),
+          Positioned(
+            left: 20,
+            top: 40,
+            child: Transform.translate(
+              offset: Offset.fromDirection(getRadiansFormDegree(90),
+                  degOneTranslationAnimation.value * 100),
+              child: Transform(
+                alignment: Alignment.center,
+                transform: Matrix4.rotationZ(
+                  getRadiansFormDegree(rotationAnimation.value),
+                )..scale(degOneTranslationAnimation.value),
+                child: CircularButton(
+                  color: Colors.white,
+                  width: 50,
+                  height: 50,
+                  icon: Icon(
+                    Icons.person_outline,
+                    color: Colors.black,
+                  ),
+                  onclick: () {
+                    if (animationController.isCompleted) {
+                      animationController.reverse();
+                      setState(() {
+                        _selectedIndex = 2;
+                      });
+                    } else {
+                      animationController.forward();
+                    }
+                  },
                 ),
               ),
-              icon2: Icon(Icons.arrow_right),
-              press: () => onTap(context, 1),
             ),
-            CustomTitle(
-              icon1: Icon(
-                Icons.question_answer_outlined,
+          ),
+          Positioned(
+            left: 20,
+            top: 40,
+            child: CircularButton(
+              color: Colors.white,
+              width: 60,
+              height: 60,
+              icon: Icon(
+                Icons.menu,
+                color: Colors.black,
               ),
-              text: Text(
-                'Question',
-                style: TextStyle(
-                  fontSize: 16.0,
-                ),
-              ),
-              icon2: Icon(Icons.arrow_right),
-              press: () => onTap(context, 2),
+              onclick: () {
+                if (animationController.isCompleted) {
+                  animationController.reverse();
+                } else {
+                  animationController.forward();
+                }
+              },
             ),
-            CustomTitle(
-              icon1: Icon(Icons.add_alert_outlined),
-              text: Text(
-                'Notification',
-                style: TextStyle(
-                  fontSize: 16.0,
-                ),
-              ),
-              icon2: Icon(Icons.arrow_right),
-              press: () => onTap(context, 3),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

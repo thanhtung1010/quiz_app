@@ -10,42 +10,24 @@ class Background extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: gradientEndColor,
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [gradientStartColor, gradientEndColor],
-            begin: Alignment.center,
-            end: Alignment.bottomCenter,
-            stops: [0.3, 0.7],
+    Size size = MediaQuery.of(context).size;
+    return Container(
+      width: double.infinity,
+      height: size.height,
+      color: Colors.purple[50],
+      child: Stack(
+        alignment: Alignment.center,
+        children: <Widget>[
+          Positioned(
+            top: 0,
+            left: 0,
+            child: Image.asset(
+              "assets/images/main_top.png",
+              width: size.width * 0.35,
+            ),
           ),
-        ),
-        child: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(32.0),
-                child: Column(
-                  children: <Widget>[
-                    Text(
-                      'Courses',
-                      style: TextStyle(
-                        fontFamily: 'Avenir',
-                        fontSize: 44,
-                        color: const Color(0xffffffff),
-                        fontWeight: FontWeight.w900,
-                      ),
-                      textAlign: TextAlign.left,
-                    ),
-                  ],
-                ),
-              ),
-              child,
-            ],
-          ),
-        ),
+          child,
+        ],
       ),
     );
   }
