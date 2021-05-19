@@ -6,9 +6,17 @@ class CircularButton extends StatelessWidget {
   final Color color;
   final Icon icon;
   final Function onclick;
+  final String hinttext;
 
-  const CircularButton(
-      {Key key, this.width, this.height, this.color, this.icon, this.onclick});
+  const CircularButton({
+    Key key,
+    this.width,
+    this.height,
+    this.color,
+    this.icon,
+    this.onclick,
+    this.hinttext,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +31,7 @@ class CircularButton extends StatelessWidget {
         icon: icon,
         enableFeedback: true,
         onPressed: onclick,
+        tooltip: hinttext,
       ),
     );
   }

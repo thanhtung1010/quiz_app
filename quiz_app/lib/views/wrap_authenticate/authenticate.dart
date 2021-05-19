@@ -4,8 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:quiz_app/routes/authentication_service.dart';
 import 'package:quiz_app/views/home_page/home_page.dart';
 import 'package:quiz_app/views/signin_page/components/body.dart';
+import 'package:quiz_app/views/signup_page/components/body.dart';
 
-class SignInPage extends StatelessWidget {
+class Authenticate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -14,12 +15,11 @@ class SignInPage extends StatelessWidget {
           create: (_) => AuthenticationService(FirebaseAuth.instance),
         ),
         StreamProvider(
-            create: (context) =>
-                context.read<AuthenticationService>().authStateChanges),
+          create: (context) =>
+              context.read<AuthenticationService>().authStateChanges,
+        ),
       ],
-      child: Scaffold(
-        body: AuthenticationWrapper(),
-      ),
+      child: AuthenticationWrapper(),
     );
   }
 }
@@ -36,6 +36,29 @@ class AuthenticationWrapper extends StatelessWidget {
       return HomePage();
     }
 
-    return Body();
+    return WrapAuthenticate();
+  }
+}
+
+class WrapAuthenticate extends StatefulWidget {
+  @override
+  _WrapAuthenticateState createState() => _WrapAuthenticateState();
+}
+
+class _WrapAuthenticateState extends State<WrapAuthenticate> {
+  bool showSignIn = false;
+  void toggleView() {
+    setState(() {
+      showSignIn = !showSignIn;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (showSignIn) {
+      return BodySignIn(toggleView: toggleView);
+    } else {
+      return BodySignUp(toggleView: toggleView);
+    }
   }
 }

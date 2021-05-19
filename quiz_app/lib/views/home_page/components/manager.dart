@@ -1,12 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:quiz_app/views/Constants.dart';
 import 'package:quiz_app/views/components/circular_button.dart';
-import 'package:quiz_app/views/home_page/components/MCategory.dart';
-import 'package:quiz_app/views/home_page/components/MQuestion.dart';
-import 'package:quiz_app/views/home_page/components/MUser.dart';
 import 'package:quiz_app/views/home_page/components/background.dart';
+import 'package:quiz_app/views/home_page/components/manager/MCategory.dart';
+import 'package:quiz_app/views/home_page/components/manager/MQuestion.dart';
+import 'package:quiz_app/views/home_page/components/manager/MUser.dart';
 
 class ManagerPage extends StatefulWidget {
   @override
@@ -64,7 +63,7 @@ class _ManagerPageState extends State<ManagerPage>
             top: 40,
             child: Transform.translate(
               offset: Offset.fromDirection(getRadiansFormDegree(0),
-                  degOneTranslationAnimation.value * 100),
+                  degOneTranslationAnimation.value * 70),
               child: Transform(
                 alignment: Alignment.center,
                 transform: Matrix4.rotationZ(
@@ -74,6 +73,7 @@ class _ManagerPageState extends State<ManagerPage>
                   color: Colors.white,
                   width: 50,
                   height: 50,
+                  hinttext: 'Category',
                   icon: Icon(
                     Icons.margin,
                     color: Colors.black,
@@ -96,8 +96,8 @@ class _ManagerPageState extends State<ManagerPage>
             left: 20,
             top: 40,
             child: Transform.translate(
-              offset: Offset.fromDirection(getRadiansFormDegree(45),
-                  degOneTranslationAnimation.value * 100),
+              offset: Offset.fromDirection(getRadiansFormDegree(0),
+                  degOneTranslationAnimation.value * 130),
               child: Transform(
                 alignment: Alignment.center,
                 transform: Matrix4.rotationZ(
@@ -107,6 +107,7 @@ class _ManagerPageState extends State<ManagerPage>
                   color: Colors.white,
                   width: 50,
                   height: 50,
+                  hinttext: 'Question',
                   icon: Icon(
                     Icons.question_answer_outlined,
                     color: Colors.black,
@@ -129,8 +130,8 @@ class _ManagerPageState extends State<ManagerPage>
             left: 20,
             top: 40,
             child: Transform.translate(
-              offset: Offset.fromDirection(getRadiansFormDegree(90),
-                  degOneTranslationAnimation.value * 100),
+              offset: Offset.fromDirection(getRadiansFormDegree(0),
+                  degOneTranslationAnimation.value * 190),
               child: Transform(
                 alignment: Alignment.center,
                 transform: Matrix4.rotationZ(
@@ -140,6 +141,7 @@ class _ManagerPageState extends State<ManagerPage>
                   color: Colors.white,
                   width: 50,
                   height: 50,
+                  hinttext: 'Account',
                   icon: Icon(
                     Icons.person_outline,
                     color: Colors.black,
@@ -161,6 +163,33 @@ class _ManagerPageState extends State<ManagerPage>
           Positioned(
             left: 20,
             top: 40,
+            child: Transform.translate(
+              offset: Offset.fromDirection(getRadiansFormDegree(0),
+                  degOneTranslationAnimation.value * 250),
+              child: Transform(
+                alignment: Alignment.center,
+                transform: Matrix4.rotationZ(
+                  getRadiansFormDegree(rotationAnimation.value),
+                )..scale(degOneTranslationAnimation.value),
+                child: CircularButton(
+                  color: Colors.white,
+                  width: 50,
+                  height: 50,
+                  hinttext: 'Logout',
+                  icon: Icon(
+                    Icons.logout,
+                    color: Colors.black,
+                  ),
+                  onclick: () async {
+                    await FirebaseAuth.instance.signOut();
+                  },
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            left: 20,
+            top: 40,
             child: CircularButton(
               color: Colors.white,
               width: 60,
@@ -169,6 +198,7 @@ class _ManagerPageState extends State<ManagerPage>
                 Icons.menu,
                 color: Colors.black,
               ),
+              hinttext: 'Menu',
               onclick: () {
                 if (animationController.isCompleted) {
                   animationController.reverse();

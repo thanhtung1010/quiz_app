@@ -8,10 +8,6 @@ class AuthenticationService {
   final CollectionReference userList =
       FirebaseFirestore.instance.collection('Users');
 
-  Future<void> signOut() async {
-    await _firebaseAuth.signOut();
-  }
-
   Future<String> signIn({String email, String password}) async {
     try {
       UserCredential result = await _firebaseAuth.signInWithEmailAndPassword(
@@ -36,12 +32,13 @@ class AuthenticationService {
           .set(userData)
           .catchError((e) {
         if (!e) {
-          print('add course success');
+          print('add user success');
         } else {
           print(e.toString());
         }
       });
-      return "Signed up";
+      User user = result.user;
+      return user.uid;
     } on FirebaseAuthException catch (e) {
       return e.message;
     }
@@ -64,11 +61,11 @@ class AuthenticationService {
   }
 
   Future GetRuleUserById(String uid) async {
-    String userRule;
+    bool userRule;
 
     try {
       await userList.doc(uid).get().then((DocumentSnapshot doc) => {
-            userRule = doc.get('rule'),
+            userRule = doc.get('isAdmin'),
           });
       return userRule;
     } catch (e) {

@@ -92,13 +92,19 @@ class _CategoryPageState extends State<CategoryPage> {
                                 Container(
                                   height: 80,
                                   width: 80,
+                                  alignment: Alignment.center,
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     borderRadius: BorderRadius.circular(25),
                                   ),
+                                  child: Image.network(
+                                    '${CategoryList[index]['imgURL']}',
+                                    height: 40,
+                                    width: 40,
+                                  ),
                                 ),
                                 Container(
-                                  padding: const EdgeInsets.all(5),
+                                  padding: const EdgeInsets.all(10),
                                   height: 80,
                                   width: size.width * 0.535,
                                   decoration: BoxDecoration(
@@ -109,6 +115,7 @@ class _CategoryPageState extends State<CategoryPage> {
                                     '${CategoryList[index]['categoryDes']}',
                                     maxLines: 3,
                                     style: TextStyle(fontSize: 16),
+                                    textAlign: TextAlign.justify,
                                   ),
                                 ),
                                 Container(

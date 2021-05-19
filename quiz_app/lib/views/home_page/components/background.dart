@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:quiz_app/views/Constants.dart';
 
 class Background extends StatelessWidget {
   final Widget child;

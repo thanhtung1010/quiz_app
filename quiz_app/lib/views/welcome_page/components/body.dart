@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:quiz_app/views/components/rounded_button.dart';
-import 'package:quiz_app/views/signin_page/signin_page.dart';
-import 'package:quiz_app/views/signup_page/signup_page.dart';
 import 'package:quiz_app/views/welcome_page/components/background.dart';
+import 'package:quiz_app/views/wrap_authenticate/authenticate.dart';
 
 class Body extends StatelessWidget {
   @override
@@ -32,7 +31,7 @@ class Body extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) {
-                      return SignInPage();
+                      return Authenticate();
                     },
                   ),
                 );
@@ -40,21 +39,6 @@ class Body extends StatelessWidget {
             ),
             SizedBox(
               height: size.height * 0.02,
-            ),
-            RoundedButton(
-              text: 'SIGN UP',
-              color: Colors.white,
-              textColor: Colors.black,
-              press: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return SignUpPage();
-                    },
-                  ),
-                );
-              },
             ),
           ],
         ),

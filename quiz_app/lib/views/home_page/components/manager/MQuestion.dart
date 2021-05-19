@@ -119,7 +119,6 @@ class _AddState extends State<Add> {
         'answer01': answer01,
         'answer02': answer02,
         'answer03': answer03,
-        'answer04': answer04,
       };
 
       dataQuestions.AddQuestion(questionMap, questionId, _categoryId)
@@ -236,25 +235,6 @@ class _AddState extends State<Add> {
                       ),
                       onChanged: (val) {
                         answer03 = val;
-                      },
-                    ),
-                    SizedBox(
-                      height: size.height * 0.025,
-                    ),
-                    TextFormField(
-                      validator: (value) {
-                        return value.isEmpty
-                            ? "Answer04 cannot be empty"
-                            : null;
-                      },
-                      decoration: InputDecoration(
-                        labelText: 'Answer04',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(26),
-                        ),
-                      ),
-                      onChanged: (val) {
-                        answer04 = val;
                       },
                     ),
                     SizedBox(
