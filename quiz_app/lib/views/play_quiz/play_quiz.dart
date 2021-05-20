@@ -1,16 +1,20 @@
 import 'dart:math';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:quiz_app/models/question.dart';
+import 'package:quiz_app/models/score.dart';
 import 'package:quiz_app/views/play_quiz/components/question_model.dart';
 import 'package:quiz_app/views/play_quiz/components/quiz_play_widget.dart';
 import 'package:quiz_app/views/play_quiz/components/result.dart';
+import 'package:quiz_app/views/play_quiz/components/result_model.dart';
 import 'package:quiz_app/views/play_quiz/components/use_answer.dart';
+import 'package:random_string/random_string.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PlayQuiz extends StatefulWidget {
-  final String courseId, courseName;
-  PlayQuiz(this.courseId, this.courseName);
+  final String categoryId, categoryName;
+  PlayQuiz(this.categoryId, this.categoryName);
   @override
   _PlayQuizState createState() => _PlayQuizState();
 }
@@ -18,7 +22,8 @@ class PlayQuiz extends StatefulWidget {
 int total = 0;
 int _correct = 0;
 int _incorrect = 0;
-int _notAttempted = 0;
+int _score = 0;
+ResultModel resultList = new ResultModel();
 
 class _PlayQuizState extends State<PlayQuiz> {
   List QuestionList = [];
@@ -27,10 +32,12 @@ class _PlayQuizState extends State<PlayQuiz> {
   int randomNumber;
   String value;
   int indexPage = 0;
+  bool _isLoading = false;
   CarouselController buttonCarouselController = CarouselController();
   SharedPreferences pref;
   List<UserAnswer> userAnswers = new List<UserAnswer>();
-
+  FirebaseAuth auth = FirebaseAuth.instance;
+  DataScore dataScore = new DataScore();
   DataQuestions dataQuestions;
 
   getQuestionModelFromNewList(List NewQuestionList, int index) {
@@ -38,12 +45,12 @@ class _PlayQuizState extends State<PlayQuiz> {
     questionModel.questionID = NewQuestionList[index]['questionID'];
     questionModel.questionText = NewQuestionList[index]['questionText'];
     questionModel.questionImgURL = NewQuestionList[index]['questionImgURL'];
-
+    resultList.correctAnswer = NewQuestionList[index]['answer01'];
+    resultList.questionText = NewQuestionList[index]['questionText'];
     List<String> answers = [
       NewQuestionList[index]['answer01'],
       NewQuestionList[index]['answer02'],
       NewQuestionList[index]['answer03'],
-      NewQuestionList[index]['answer04'],
     ];
 
     questionModel.correctAnswer = answers[0];
@@ -53,7 +60,6 @@ class _PlayQuizState extends State<PlayQuiz> {
     questionModel.answer01 = answers[0];
     questionModel.answer02 = answers[1];
     questionModel.answer03 = answers[2];
-    questionModel.answer04 = answers[3];
     questionModel.aswered = false;
 
     return questionModel;
@@ -62,9 +68,10 @@ class _PlayQuizState extends State<PlayQuiz> {
   @override
   void initState() {
     super.initState();
-    fecth20QuestionList('${widget.courseId}');
+    fecth20QuestionList('${widget.categoryId}');
     _correct = 0;
     _incorrect = 0;
+    _score = 0;
   }
 
   fecth20QuestionList(String id) async {
@@ -88,7 +95,6 @@ class _PlayQuizState extends State<PlayQuiz> {
       });
     }
     total = NewQuestionList.length;
-    _notAttempted = NewQuestionList.length;
   }
 
   @override
@@ -99,10 +105,10 @@ class _PlayQuizState extends State<PlayQuiz> {
         backgroundColor: Colors.white,
         appBar: AppBar(
           title: Text(
-            '${widget.courseName} total',
+            '${widget.categoryName} testing',
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              fontSize: 30.0,
+              fontSize: 25,
               fontFamily: 'Avenir',
             ),
             textAlign: TextAlign.center,
@@ -118,39 +124,69 @@ class _PlayQuizState extends State<PlayQuiz> {
           ),
         ),
         body: SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
+          child: SafeArea(
+            child: Container(
+              padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: CarouselSlider.builder(
+                  itemCount: NewQuestionList.length,
+                  itemBuilder: (context, index, indexPage) => QuizPlay(
+                        questionModel:
+                            getQuestionModelFromNewList(NewQuestionList, index),
+                        index: index,
+                      ),
+                  options: CarouselOptions(
+                    height: size.height * 0.868,
+                    aspectRatio: 16 / 9,
+                    viewportFraction: 1.0,
+                    initialPage: 0,
+                    reverse: false,
+                    autoPlay: false,
+                    enlargeCenterPage: false,
+                    enableInfiniteScroll: false,
+                  )),
             ),
-            child: CarouselSlider.builder(
-                itemCount: NewQuestionList.length,
-                itemBuilder: (context, index, indexPage) => QuizPlay(
-                      questionModel:
-                          getQuestionModelFromNewList(NewQuestionList, index),
-                      index: index,
-                    ),
-                options: CarouselOptions(
-                  height: size.height * 0.868,
-                  aspectRatio: 16 / 9,
-                  viewportFraction: 1.0,
-                  initialPage: 0,
-                  reverse: false,
-                  autoPlay: false,
-                  enlargeCenterPage: false,
-                  enableInfiniteScroll: false,
-                )),
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.check),
-          onPressed: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => Result(
-                    correct: _correct, incorrect: _incorrect, total: total),
-              ),
+          child: _isLoading
+              ? Container(
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                )
+              : Icon(Icons.check),
+          onPressed: () async {
+            setState(() {
+              _isLoading = true;
+            });
+            String scoreId = randomAlphaNumeric(20);
+            Map<String, dynamic> scoreMap = {
+              "scoreId": scoreId,
+              "userId": auth.currentUser.uid,
+              "score": _score,
+            };
+
+            await dataScore.AddScore(scoreMap, scoreId).then(
+              (value) => {
+                setState(() {
+                  _isLoading = false;
+                }),
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Result(
+                      correct: _correct,
+                      incorrect: _incorrect,
+                      total: total,
+                      score: _score,
+                      resultModel: resultList,
+                    ),
+                  ),
+                )
+              },
             );
           },
         ),
@@ -257,20 +293,22 @@ class _QuizPlayState extends State<QuizPlay> {
                   widget.questionModel.aswered = true;
                   setState(() {
                     _correct += 1;
-                    _notAttempted -= 1;
+                    _score += 5;
+                    resultList.selectedAnswer = widget.questionModel.answer01;
                   });
                 } else {
                   optionSelected = widget.questionModel.answer01;
                   widget.questionModel.aswered = true;
                   setState(() {
                     _incorrect += 1;
-                    _notAttempted -= 1;
+                    resultList.selectedAnswer = widget.questionModel.answer01;
                   });
                 }
               }
             },
             child: OptionTitle(
-              option: 'A',
+              answered: widget.questionModel.aswered,
+              option: '1',
               optionSelected: optionSelected,
               correctAnswer: widget.questionModel.correctAnswer,
               description: widget.questionModel.answer01,
@@ -289,7 +327,8 @@ class _QuizPlayState extends State<QuizPlay> {
 
                   setState(() {
                     _correct += 1;
-                    _notAttempted -= 1;
+                    _score += 5;
+                    resultList.selectedAnswer = widget.questionModel.answer02;
                   });
                 } else {
                   optionSelected = widget.questionModel.answer02;
@@ -297,13 +336,14 @@ class _QuizPlayState extends State<QuizPlay> {
 
                   setState(() {
                     _incorrect += 1;
-                    _notAttempted -= 1;
+                    resultList.selectedAnswer = widget.questionModel.answer02;
                   });
                 }
               }
             },
             child: OptionTitle(
-              option: 'B',
+              answered: widget.questionModel.aswered,
+              option: '2',
               optionSelected: optionSelected,
               correctAnswer: widget.questionModel.correctAnswer,
               description: widget.questionModel.answer02,
@@ -322,7 +362,8 @@ class _QuizPlayState extends State<QuizPlay> {
 
                   setState(() {
                     _correct += 1;
-                    _notAttempted -= 1;
+                    _score += 5;
+                    resultList.selectedAnswer = widget.questionModel.answer03;
                   });
                 } else {
                   optionSelected = widget.questionModel.answer03;
@@ -330,49 +371,17 @@ class _QuizPlayState extends State<QuizPlay> {
 
                   setState(() {
                     _incorrect += 1;
-                    _notAttempted -= 1;
+                    resultList.selectedAnswer = widget.questionModel.answer03;
                   });
                 }
               }
             },
             child: OptionTitle(
-              option: 'C',
+              answered: widget.questionModel.aswered,
+              option: '3',
               optionSelected: optionSelected,
               correctAnswer: widget.questionModel.correctAnswer,
               description: widget.questionModel.answer03,
-            ),
-          ),
-          SizedBox(
-            height: size.height * 0.02,
-          ),
-          GestureDetector(
-            onTap: () {
-              if (!widget.questionModel.aswered) {
-                if (widget.questionModel.answer04 ==
-                    widget.questionModel.correctAnswer) {
-                  optionSelected = widget.questionModel.answer04;
-                  widget.questionModel.aswered = true;
-
-                  setState(() {
-                    _correct += 1;
-                    _notAttempted -= 1;
-                  });
-                } else {
-                  optionSelected = widget.questionModel.answer04;
-                  widget.questionModel.aswered = true;
-
-                  setState(() {
-                    _incorrect += 1;
-                    _notAttempted -= 1;
-                  });
-                }
-              }
-            },
-            child: OptionTitle(
-              option: 'D',
-              optionSelected: optionSelected,
-              correctAnswer: widget.questionModel.correctAnswer,
-              description: widget.questionModel.answer04,
             ),
           ),
           SizedBox(

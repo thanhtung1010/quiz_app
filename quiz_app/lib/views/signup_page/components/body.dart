@@ -2,7 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:quiz_app/routes/authentication_service.dart';
+import 'package:quiz_app/routes/social_authenticate.dart';
 import 'package:quiz_app/views/Constants.dart';
 import 'package:quiz_app/views/components/already_have_an_account_acheck.dart';
 import 'package:quiz_app/views/components/rounded_button.dart';
@@ -20,6 +22,7 @@ class BodySignUp extends StatefulWidget {
 }
 
 bool _passwordVisible = false;
+bool _passwordVisibleComfirm = false;
 
 class _BodySignUpState extends State<BodySignUp> {
   bool check = false;
@@ -28,8 +31,10 @@ class _BodySignUpState extends State<BodySignUp> {
   String email, nameAccount;
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController comfirmPassword = TextEditingController();
   final AuthenticationService _auth =
       new AuthenticationService(FirebaseAuth.instance);
+  final SocialAuthenticate _socialAuthenticate = new SocialAuthenticate();
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -59,7 +64,12 @@ class _BodySignUpState extends State<BodySignUp> {
                     },
                     controller: emailController,
                     validator: (value) {
-                      return value.isEmpty ? "Enter your email" : null;
+                      return value.isEmpty
+                          ? "Enter your email"
+                          : !RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
+                                  .hasMatch(value)
+                              ? "Please enter valid email"
+                              : null;
                     },
                     cursorColor: kPrimaryColor,
                     decoration: InputDecoration(
@@ -122,6 +132,41 @@ class _BodySignUpState extends State<BodySignUp> {
                     ),
                   ),
                 ),
+                TextFieldContainer(
+                  child: TextFormField(
+                    controller: comfirmPassword,
+                    validator: (value) {
+                      return value.isEmpty
+                          ? "Please enter re-password"
+                          : passwordController.text != comfirmPassword.text
+                              ? "Password does not match"
+                              : null;
+                    },
+                    obscureText: !_passwordVisibleComfirm,
+                    cursorColor: kPrimaryColor,
+                    decoration: InputDecoration(
+                      hintText: 'Comfirm your password',
+                      border: InputBorder.none,
+                      icon: Icon(
+                        Icons.lock_outlined,
+                        color: kPrimaryColor,
+                      ),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _passwordVisibleComfirm
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined,
+                          color: kPrimaryColor,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _passwordVisibleComfirm = !_passwordVisibleComfirm;
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                ),
                 SizedBox(height: size.height * 0.05),
                 RoundedButton(
                   text: "SIGNUP",
@@ -141,19 +186,14 @@ class _BodySignUpState extends State<BodySignUp> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     SocalIcon(
-                      iconSrc: "assets/icons/facebook.svg",
-                      press: () {},
-                    ),
-                    SocalIcon(
-                      iconSrc: "assets/icons/twitter.svg",
-                      press: () {},
-                    ),
-                    SocalIcon(
                       iconSrc: "assets/icons/google-plus.svg",
-                      press: () {},
+                      press: () {
+                        _socialAuthenticate.signInWithGoogle();
+                      },
                     ),
                   ],
-                )
+                ),
+                SizedBox(height: size.height * 0.05),
               ],
             ),
           ),

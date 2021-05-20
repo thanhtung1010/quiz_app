@@ -46,7 +46,7 @@ class WrapAuthenticate extends StatefulWidget {
 }
 
 class _WrapAuthenticateState extends State<WrapAuthenticate> {
-  bool showSignIn = false;
+  bool showSignIn = true;
   void toggleView() {
     setState(() {
       showSignIn = !showSignIn;

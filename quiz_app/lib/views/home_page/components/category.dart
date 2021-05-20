@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:quiz_app/models/category.dart';
 import 'package:quiz_app/views/home_page/components/background.dart';
+import 'package:quiz_app/views/play_quiz/play_quiz.dart';
 
 class CategoryPage extends StatefulWidget {
   @override
@@ -41,107 +42,120 @@ class _CategoryPageState extends State<CategoryPage> {
         FirebaseFirestore.instance.collection('Categorys');
     Size size = MediaQuery.of(context).size;
     return Background(
-      child: SafeArea(
-        child: Container(
-          padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-          child: Column(
-            children: [
-              Text(
-                'Test exam',
-                style: TextStyle(
-                  fontFamily: 'Avenir',
-                  fontSize: 40,
-                  color: Colors.black87,
-                  fontWeight: FontWeight.w900,
+      child: SingleChildScrollView(
+        child: SafeArea(
+          child: Container(
+            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+            child: Column(
+              children: [
+                Text(
+                  'Test exam',
+                  style: TextStyle(
+                    fontFamily: 'Avenir',
+                    fontSize: 40,
+                    color: Colors.black87,
+                    fontWeight: FontWeight.w900,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(
-                height: size.height * 0.1,
-              ),
-              _isLoading
-                  ? Container(
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    )
-                  : SingleChildScrollView(
-                      child: ListView.builder(
+                SizedBox(
+                  height: size.height * 0.05,
+                ),
+                _isLoading
+                    ? Container(
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      )
+                    : ListView.builder(
                         scrollDirection: Axis.vertical,
                         shrinkWrap: true,
                         itemBuilder: (context, index) {
-                          return Container(
-                            margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                            height: 80,
-                            width: size.width,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(25),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.5),
-                                  spreadRadius: 3,
-                                  blurRadius: 5,
-                                  offset: Offset(0, 3),
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PlayQuiz(
+                                      '${CategoryList[index]['categoryId']}',
+                                      '${CategoryList[index]['categoryName']}'),
                                 ),
-                              ],
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Container(
-                                  height: 80,
-                                  width: 80,
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(25),
+                              );
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                              height: 80,
+                              width: size.width,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(25),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 3,
+                                    blurRadius: 5,
+                                    offset: Offset(0, 3),
                                   ),
-                                  child: Image.network(
-                                    '${CategoryList[index]['imgURL']}',
-                                    height: 40,
-                                    width: 40,
-                                  ),
-                                ),
-                                Container(
-                                  padding: const EdgeInsets.all(10),
-                                  height: 80,
-                                  width: size.width * 0.535,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(25),
-                                  ),
-                                  child: AutoSizeText(
-                                    '${CategoryList[index]['categoryDes']}',
-                                    maxLines: 3,
-                                    style: TextStyle(fontSize: 16),
-                                    textAlign: TextAlign.justify,
-                                  ),
-                                ),
-                                Container(
-                                  alignment: Alignment.center,
-                                  height: 80,
-                                  width: 80,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(25),
-                                  ),
-                                  child: Text(
-                                    '${CategoryList[index]['categoryName']}',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 25,
+                                ],
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    height: 80,
+                                    width: 80,
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(25),
+                                    ),
+                                    child: Image.network(
+                                      '${CategoryList[index]['imgURL']}',
+                                      height: 40,
+                                      width: 40,
                                     ),
                                   ),
-                                ),
-                              ],
+                                  Container(
+                                    padding: const EdgeInsets.all(10),
+                                    height: 80,
+                                    width: size.width * 0.535,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(25),
+                                    ),
+                                    child: AutoSizeText(
+                                      '${CategoryList[index]['categoryDes']}',
+                                      maxLines: 3,
+                                      style: TextStyle(fontSize: 16),
+                                      textAlign: TextAlign.justify,
+                                    ),
+                                  ),
+                                  Container(
+                                    alignment: Alignment.center,
+                                    height: 80,
+                                    width: 80,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(25),
+                                    ),
+                                    child: Text(
+                                      '${CategoryList[index]['categoryName']}',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 25,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           );
                         },
                         itemCount: CategoryList.length,
                       ),
-                    ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

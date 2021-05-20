@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 
 class OptionTitle extends StatefulWidget {
   final String option, description, correctAnswer, optionSelected;
-  OptionTitle(
-      {@required this.option,
-      @required this.optionSelected,
-      @required this.correctAnswer,
-      @required this.description});
+  final bool answered;
+  OptionTitle({
+    @required this.option,
+    @required this.optionSelected,
+    @required this.correctAnswer,
+    @required this.description,
+    @required this.answered,
+  });
   @override
   _OptionTitleState createState() => _OptionTitleState();
 }
