@@ -1,5 +1,5 @@
 class ResultModel {
   String questionText;
-  String selectedAnswer;
+  String imgURL;
   String correctAnswer;
 }

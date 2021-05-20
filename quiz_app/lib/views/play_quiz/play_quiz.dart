@@ -2,8 +2,14 @@ import 'dart:math';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:quiz_app/models/question.dart';
 import 'package:quiz_app/models/score.dart';
+import 'package:quiz_app/state/answer_state.dart';
+import 'package:quiz_app/state/answered.dart';
+import 'package:quiz_app/state/correct_answer.dart';
+import 'package:quiz_app/state/imgURL.dart';
+import 'package:quiz_app/state/question_state.dart';
 import 'package:quiz_app/views/play_quiz/components/question_model.dart';
 import 'package:quiz_app/views/play_quiz/components/quiz_play_widget.dart';
 import 'package:quiz_app/views/play_quiz/components/result.dart';
@@ -182,7 +188,6 @@ class _PlayQuizState extends State<PlayQuiz> {
                       incorrect: _incorrect,
                       total: total,
                       score: _score,
-                      resultModel: resultList,
                     ),
                   ),
                 )
@@ -257,6 +262,11 @@ class _QuizPlayState extends State<QuizPlay> {
   String optionSelected = '';
   @override
   Widget build(BuildContext context) {
+    final addAnswerSelected = Provider.of<Answered>(context);
+    final addQuestionList = Provider.of<Question>(context);
+    final addCorrectAnsList = Provider.of<CorrectAns>(context);
+    final addURLList = Provider.of<URL>(context);
+    final answered = Provider.of<Answer>(context);
     Size size = MediaQuery.of(context).size;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -294,17 +304,21 @@ class _QuizPlayState extends State<QuizPlay> {
                   setState(() {
                     _correct += 1;
                     _score += 5;
-                    resultList.selectedAnswer = widget.questionModel.answer01;
                   });
                 } else {
                   optionSelected = widget.questionModel.answer01;
                   widget.questionModel.aswered = true;
                   setState(() {
                     _incorrect += 1;
-                    resultList.selectedAnswer = widget.questionModel.answer01;
                   });
                 }
               }
+              addAnswerSelected.addAnswer(selectedAnswer: optionSelected);
+              addQuestionList.addQuestion(
+                  questionText: widget.questionModel.questionText);
+              addCorrectAnsList.addAnswer(
+                  correctAnswer: widget.questionModel.correctAnswer);
+              addURLList.addURL(imgURL: widget.questionModel.questionImgURL);
             },
             child: OptionTitle(
               answered: widget.questionModel.aswered,
@@ -324,22 +338,24 @@ class _QuizPlayState extends State<QuizPlay> {
                     widget.questionModel.correctAnswer) {
                   optionSelected = widget.questionModel.answer02;
                   widget.questionModel.aswered = true;
-
                   setState(() {
                     _correct += 1;
                     _score += 5;
-                    resultList.selectedAnswer = widget.questionModel.answer02;
                   });
                 } else {
                   optionSelected = widget.questionModel.answer02;
                   widget.questionModel.aswered = true;
-
                   setState(() {
                     _incorrect += 1;
-                    resultList.selectedAnswer = widget.questionModel.answer02;
                   });
                 }
               }
+              addAnswerSelected.addAnswer(selectedAnswer: optionSelected);
+              addQuestionList.addQuestion(
+                  questionText: widget.questionModel.questionText);
+              addCorrectAnsList.addAnswer(
+                  correctAnswer: widget.questionModel.correctAnswer);
+              addURLList.addURL(imgURL: widget.questionModel.questionImgURL);
             },
             child: OptionTitle(
               answered: widget.questionModel.aswered,
@@ -359,22 +375,24 @@ class _QuizPlayState extends State<QuizPlay> {
                     widget.questionModel.correctAnswer) {
                   optionSelected = widget.questionModel.answer03;
                   widget.questionModel.aswered = true;
-
                   setState(() {
                     _correct += 1;
                     _score += 5;
-                    resultList.selectedAnswer = widget.questionModel.answer03;
                   });
                 } else {
                   optionSelected = widget.questionModel.answer03;
                   widget.questionModel.aswered = true;
-
                   setState(() {
                     _incorrect += 1;
-                    resultList.selectedAnswer = widget.questionModel.answer03;
                   });
                 }
               }
+              addAnswerSelected.addAnswer(selectedAnswer: optionSelected);
+              addQuestionList.addQuestion(
+                  questionText: widget.questionModel.questionText);
+              addCorrectAnsList.addAnswer(
+                  correctAnswer: widget.questionModel.correctAnswer);
+              addURLList.addURL(imgURL: widget.questionModel.questionImgURL);
             },
             child: OptionTitle(
               answered: widget.questionModel.aswered,

@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:quiz_app/routes/authentication_service.dart';
+import 'package:quiz_app/state/answer_state.dart';
 import 'package:quiz_app/views/home_page/home_page.dart';
 import 'package:quiz_app/views/signin_page/components/body.dart';
 import 'package:quiz_app/views/signup_page/components/body.dart';

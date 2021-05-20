@@ -26,11 +26,10 @@ class _OptionTitleState extends State<OptionTitle> {
           alignment: Alignment.center,
           decoration: BoxDecoration(
             border: Border.all(
-              color: widget.description == widget.optionSelected
-                  ? widget.optionSelected == widget.correctAnswer
-                      ? Colors.green.withOpacity(0.7)
-                      : Colors.red.withOpacity(0.7)
-                  : Colors.black,
+              color:
+                  widget.description == widget.optionSelected && widget.answered
+                      ? Colors.grey
+                      : Colors.black,
               width: 2.0,
             ),
             borderRadius: BorderRadius.circular(30),
@@ -38,11 +37,10 @@ class _OptionTitleState extends State<OptionTitle> {
           child: Text(
             '${widget.option}',
             style: TextStyle(
-              color: widget.optionSelected == widget.description
-                  ? widget.correctAnswer == widget.optionSelected
-                      ? Colors.green
-                      : Colors.red
-                  : Colors.black,
+              color:
+                  widget.description == widget.optionSelected && widget.answered
+                      ? Colors.grey
+                      : Colors.black,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -55,11 +53,10 @@ class _OptionTitleState extends State<OptionTitle> {
             widget.description,
             style: TextStyle(
               fontSize: 17,
-              color: widget.optionSelected == widget.description
-                  ? widget.correctAnswer == widget.optionSelected
-                      ? Colors.green
-                      : Colors.red
-                  : Colors.black,
+              color:
+                  widget.description == widget.optionSelected && widget.answered
+                      ? Colors.grey
+                      : Colors.black,
             ),
           ),
         ),
